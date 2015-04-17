@@ -1,15 +1,15 @@
-package com.loukou.pos.auth.cvs;
+package com.loukou.mapi.auth.internal;
 
 
-public enum CvsAuthResultEnum {
+public enum InternalAuthResultEnum {
 
 	RESULT_UNKNOWN("unknown", -1),
 	
 	RESULT_SUCCESS("success", 0),
 	
-	RESULT_PARAMS_MISSING("cvsid/machineid/cityid/time missing", 1),
+	RESULT_PARAMS_MISSING("appid/time missing", 1),
 
-	RESULT_IDS_INVALID("cvsid/machineid/cityid invalid", 2),
+	RESULT_IDS_INVALID("appid/time invalid", 2),
 	
 	RESULT_BAD_FORMAT("bad param format", 3),
 	
@@ -19,11 +19,10 @@ public enum CvsAuthResultEnum {
 	
 	RESULT_SIGN_UNMATCH("sign unmatch", 6);
 	
-	
 	private String message;
 	private int id;
 	
-	private CvsAuthResultEnum(String message, int id) {
+	private InternalAuthResultEnum(String message, int id) {
 		this.message = message;
 		this.id = id;
 	}

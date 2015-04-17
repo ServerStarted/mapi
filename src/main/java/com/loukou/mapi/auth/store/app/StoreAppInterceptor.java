@@ -1,4 +1,4 @@
-package com.loukou.pos.auth.internal;
+package com.loukou.mapi.auth.store.app;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -15,20 +15,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.loukou.pos.auth.contants.MDCConstants;
+import com.loukou.mapi.auth.contants.MDCConstants;
+import com.loukou.mapi.auth.internal.InternalAuditor;
+import com.loukou.mapi.auth.internal.InternalContext;
 
-public class InternalAuthAuditInterceptor extends HandlerInterceptorAdapter {
+public class StoreAppInterceptor extends HandlerInterceptorAdapter {
 
-	private static final Logger logger = Logger.getLogger(InternalAuthAuditInterceptor.class);
+	private static final Logger logger = Logger.getLogger(StoreAppInterceptor.class);
 	public static final String ATTR_KEY_AUTH_CTX = "INTERNAL_AUTH_CONTEXT";
 	private Set<String> whiteList = new HashSet<String>();
-
+	
 	@Autowired
-	private InternalAuthenticator authenticator;
-
+	private StoreAppAuthenticator authenticator;
+	
 	@Autowired
 	private InternalAuditor auditor;
-	
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request,
@@ -69,7 +70,7 @@ public class InternalAuthAuditInterceptor extends HandlerInterceptorAdapter {
 			if (!authSucceed) {
 				//验证失败
 				try {
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "invalid sign.");
 				} catch (IOException e) {
 					logger.error("fail to response.sendError(401)", e);
 				}

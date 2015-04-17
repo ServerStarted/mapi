@@ -1,4 +1,4 @@
-package com.loukou.pos.auth.store.app;
+package com.loukou.mapi.auth.store.app;
 
 import java.util.Map;
 
@@ -9,11 +9,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.loukou.pos.auth.internal.InternalAuthResultEnum;
-import com.loukou.pos.auth.internal.InternalContext;
-import com.loukou.pos.auth.processor.AuthAccountProcessor;
-import com.loukou.pos.auth.util.HttpUtil;
-import com.loukou.pos.auth.util.PosSignUtil;
+import com.loukou.mapi.auth.internal.InternalAuthResultEnum;
+import com.loukou.mapi.auth.internal.InternalContext;
+import com.loukou.mapi.auth.processor.AuthAccountProcessor;
+import com.loukou.mapi.utils.HttpUtil;
+import com.loukou.mapi.utils.PosSignUtil;
 
 @Service
 public class StoreAppAuthenticator {

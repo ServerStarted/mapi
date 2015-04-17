@@ -1,4 +1,4 @@
-package com.loukou.pos.auth.token;
+package com.loukou.mapi.token;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.loukou.pos.auth.util.AESUtils;
+import com.loukou.mapi.utils.AESUtils;
 import com.loukou.pos.proxy.service.cvs.constants.CvsInfoStatus;
 import com.loukou.pos.proxy.service.cvs.entity.CvsInfo;
 import com.loukou.pos.proxy.service.cvs.entity.CvsStaff;

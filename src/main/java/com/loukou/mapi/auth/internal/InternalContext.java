@@ -1,4 +1,4 @@
-package com.loukou.pos.auth.internal;
+package com.loukou.mapi.auth.internal;
 
 
 

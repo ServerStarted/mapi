@@ -1,4 +1,4 @@
-package com.loukou.pos.auth.store.app;
+package com.loukou.mapi.auth.cvs;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -15,28 +15,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.loukou.pos.auth.contants.MDCConstants;
-import com.loukou.pos.auth.internal.InternalAuditor;
-import com.loukou.pos.auth.internal.InternalContext;
+import com.loukou.mapi.auth.contants.MDCConstants;
+import com.loukou.pos.proxy.service.cvs.service.impl.CvsHeartbeatService;
 
-public class StoreAppInterceptor extends HandlerInterceptorAdapter {
+public class CvsAuthAuditInterceptor extends HandlerInterceptorAdapter {
 
-	private static final Logger logger = Logger.getLogger(StoreAppInterceptor.class);
-	public static final String ATTR_KEY_AUTH_CTX = "INTERNAL_AUTH_CONTEXT";
-	private Set<String> whiteList = new HashSet<String>();
+	private static final Logger logger = Logger.getLogger(CvsAuthAuditInterceptor.class);
+	public static final String ATTR_KEY_AUTH_CTX = "PROXY_AUTH_CONTEXT";
+	private Set<String> whiteList = new HashSet<String>(); 
+
+	@Autowired
+	private CvsAuthenticator authenticator;
+
+	@Autowired
+	private CvsAuditor auditor;
 	
 	@Autowired
-	private StoreAppAuthenticator authenticator;
+	private CvsHeartbeatService heartbeatService;
 	
-	@Autowired
-	private InternalAuditor auditor;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) {
 
 		String uri = request.getRequestURI();
-		
 		String method = request.getMethod();
 		String clientIp = request.getRemoteAddr();
 		String requestId = UUID.randomUUID().toString();
@@ -46,12 +48,12 @@ public class StoreAppInterceptor extends HandlerInterceptorAdapter {
 		MDC.put(MDCConstants.KEY_CLIENT_IP, clientIp);
 		MDC.put(MDCConstants.KEY_URI, uri);
 		//记录到context以便做audit
-		InternalContext context = new InternalContext();
+		CvsContext context = new CvsContext();
 		context.setRequestId(requestId);
-		context.setBegin(System.currentTimeMillis());
 		context.setUri(uri);
 		context.setMethod(method);
 		context.setClientIp(clientIp);
+		context.setBegin(System.currentTimeMillis());
 		request.setAttribute(ATTR_KEY_AUTH_CTX, context);
 
 		//不同来源的特有部分先清空
@@ -70,7 +72,7 @@ public class StoreAppInterceptor extends HandlerInterceptorAdapter {
 			if (!authSucceed) {
 				//验证失败
 				try {
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "invalid sign.");
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 				} catch (IOException e) {
 					logger.error("fail to response.sendError(401)", e);
 				}
@@ -78,7 +80,17 @@ public class StoreAppInterceptor extends HandlerInterceptorAdapter {
 			} else {
 				//验证成功
 				//继续记录到mdc带入大点
-				MDC.put(MDCConstants.KEY_APP_ID, context.getAppId());
+				MDC.put(MDCConstants.KEY_CVS_ID, context.getCvsId());
+				MDC.put(MDCConstants.KEY_MACHINE_ID, context.getMachineId());
+				MDC.put(MDCConstants.KEY_CITY_ID, context.getCityId());
+				
+//				try {
+//					heartbeatService.logCvsHeartbeat(context.getCvsId(), context.getMachineId());
+//				} catch (Exception e) {
+//					logger.error(String.format("fail to log heartbeat cvsId[%d] machineId[%s]", 
+//							context.getCvsId(), context.getMachineId()), e);
+//				}
+				
 				return true;
 			}
 		}
@@ -88,7 +100,7 @@ public class StoreAppInterceptor extends HandlerInterceptorAdapter {
 			HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 		
-		InternalContext context = (InternalContext) request.getAttribute(ATTR_KEY_AUTH_CTX);
+		CvsContext context = (CvsContext) request.getAttribute(ATTR_KEY_AUTH_CTX);
 		context.setEnd(System.currentTimeMillis());
 		auditor.audit(context);
 	}

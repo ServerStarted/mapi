@@ -1,4 +1,4 @@
-package com.loukou.pos.auth.internal;
+package com.loukou.mapi.auth.internal;
 
 import java.util.Map;
 
@@ -12,9 +12,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.loukou.pos.auth.processor.AuthAccountProcessor;
-import com.loukou.pos.auth.util.HttpUtil;
-import com.loukou.pos.auth.util.PosSignUtil;
+import com.loukou.mapi.auth.processor.AuthAccountProcessor;
+import com.loukou.mapi.utils.HttpUtil;
+import com.loukou.mapi.utils.PosSignUtil;
 
 @Service
 public class InternalAuthenticator {

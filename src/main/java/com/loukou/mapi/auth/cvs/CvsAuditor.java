@@ -1,4 +1,4 @@
-package com.loukou.pos.auth.internal;
+package com.loukou.mapi.auth.cvs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,12 +8,12 @@ import com.loukou.dw.bizlog.BizPrinter;
 import com.loukou.dw.bizlog.IBizLog;
 
 @Service
-public final class InternalAuditor {
+public final class CvsAuditor {
 
 	@Autowired
 	private BizPrinter bizPrinter;
 
-	public void audit(InternalContext context) {
+	public void audit(CvsContext context) {
 		IBizLog bizLog = new BizLog();
 
 		bizLog.putString("requestid", context.getRequestId());
@@ -22,7 +22,9 @@ public final class InternalAuditor {
 		bizLog.putString("uri", context.getUri());
 		bizLog.putString("method", context.getMethod());
 		bizLog.putString("clientip", context.getClientIp());
-		bizLog.putInt("appid", context.getAppId());
+		bizLog.putInt("cityid", context.getCityId());
+		bizLog.putInt("cvsid", context.getCvsId());
+		bizLog.putString("machineid", context.getMachineId());
 		
 		bizPrinter.print(bizLog);
 	}

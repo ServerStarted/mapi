@@ -1,4 +1,4 @@
-package com.loukou.pos.auth.cvs;
+package com.loukou.mapi.auth.cvs;
 
 
 

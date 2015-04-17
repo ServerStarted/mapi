@@ -1,4 +1,4 @@
-package com.loukou.pos.auth.util;
+package com.loukou.mapi.utils;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;

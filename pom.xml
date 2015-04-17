@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>com.loukou.dw</groupId>
 			<artifactId>bizlog-printer</artifactId>
-			<version>${bizlog.printer.version}</version>
+			<version>0.1.0</version>
 		</dependency>
 		
 	</dependencies>

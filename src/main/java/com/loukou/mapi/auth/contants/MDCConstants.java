@@ -1,4 +1,4 @@
-package com.loukou.pos.auth.contants;
+package com.loukou.mapi.auth.contants;
 
 public class MDCConstants {
 

@@ -1,4 +1,4 @@
-package com.loukou.pos.auth.processor;
+package com.loukou.mapi.auth.processor;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
