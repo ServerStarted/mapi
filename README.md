@@ -15,6 +15,7 @@
 u           设备唯一标识, uuid
 os          系统标识, 包含版本号
 d           硬件标识  
+app         app唯一标识 (iOS 取bundle id, android 取package name)
 av          app 版本号
 c           下载渠道
 ```
@@ -46,3 +47,4 @@ ASE 加密，服务端控制
 #### 1.5 接入日志 bizlog
 
 #### 1.6. gzip 压缩
+自定义一个编码，目标是不让对方简单的获取到请求内容
