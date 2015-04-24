@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 
 import com.loukou.mapi.auth.processor.AuthAccountProcessor;
 import com.loukou.mapi.utils.HttpUtil;
-import com.loukou.mapi.utils.PosSignUtil;
+import com.loukou.mapi.utils.SignUtil;
 
 @Service
 public class CvsAuthenticator {
 
 	private static final Logger logger = Logger.getLogger(CvsAuthenticator.class);
-	private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern(PosSignUtil.DATE_TIME_FORMAT);    
+	private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern(SignUtil.DATE_TIME_FORMAT);    
 
 	@Autowired
 	private AuthAccountProcessor processor;
@@ -29,10 +29,10 @@ public class CvsAuthenticator {
 	public boolean auth(HttpServletRequest request, CvsContext context) {
 		Map<String, String> params = HttpUtil.parseParams(request);
 		//找到对应的cvsid+machineId和secret
-		String cvsIdStr = params.get(PosSignUtil.KEY_CVS_ID);
-		String machineIdStr = params.get(PosSignUtil.KEY_MACHINE_ID);
-		String cityIdStr = params.get(PosSignUtil.KEY_CITY_ID);
-		String timeStr = params.get(PosSignUtil.KEY_TIME);
+		String cvsIdStr = params.get(SignUtil.KEY_CVS_ID);
+		String machineIdStr = params.get(SignUtil.KEY_MACHINE_ID);
+		String cityIdStr = params.get(SignUtil.KEY_CITY_ID);
+		String timeStr = params.get(SignUtil.KEY_TIME);
 		//验证必要字段
 		if(StringUtils.isBlank(cvsIdStr) || StringUtils.isBlank(machineIdStr)
 				 || StringUtils.isBlank(cityIdStr) || StringUtils.isBlank(timeStr)) {
@@ -80,14 +80,14 @@ public class CvsAuthenticator {
 			return false;
 		}
 		//签名
-		String signCaled = PosSignUtil.getSign(params, secret);
+		String signCaled = SignUtil.getSign(params, secret);
 		if (StringUtils.isBlank(signCaled)) {
 			//验证失败：签名失败
 			context.setAuthResult(CvsAuthResultEnum.RESULT_SIGN_FAILED);
 			logger.info(String.format("failed to sign with params"));
 			return false;
 		}
-		String signGot = params.get(PosSignUtil.KEY_SIGN);
+		String signGot = params.get(SignUtil.KEY_SIGN);
 		if (StringUtils.isNotBlank(signGot) && signGot.equalsIgnoreCase(signCaled)) {
 			//验证成功
 			context.setCvsId(cvsId);

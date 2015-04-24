@@ -9,11 +9,13 @@ import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
-public class PosSignUtil {
-
-	private static final Logger logger = Logger.getLogger(PosSignUtil.class);
+/**
+ * 计算签名的工具类
+ * @author haiqiang
+ *
+ */
+public class SignUtil {
 	
 	public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 	public static final String KEY_APP_ID = "appid";
@@ -25,7 +27,7 @@ public class PosSignUtil {
 	public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	public static final long VALID_SPAN_MS = 60*1000; //TODO
 	
-    public static String getStringToSign(Map<String, String> params, String secret) {
+    private static String getStringToSign(Map<String, String> params, String secret) {
         Object[] key_arr = params.keySet().toArray();
         Arrays.sort(key_arr);
         String str = StringUtils.EMPTY;
@@ -65,7 +67,7 @@ public class PosSignUtil {
  	    int size = signParams.size();
  	    String[] key_arr = new String[size];
  	    int i = 0;
- 	    Iterator iter = signParams.entrySet().iterator();
+ 	    Iterator<Map.Entry<String, String>> iter = signParams.entrySet().iterator();
  	    while(iter.hasNext())
  	    {
  	    	Map.Entry<String, String> entry = (Map.Entry<String, String>)iter.next();
@@ -80,6 +82,6 @@ public class PosSignUtil {
     	Map<String, String> params = new HashMap<String, String>();
 		params.put("appid", "12");
 		params.put("time", ""+new Date().getTime());
-		System.out.println(PosSignUtil.getQueryString(params, "bcd"));
+		System.out.println(SignUtil.getQueryString(params, "bcd"));
 	}
 }

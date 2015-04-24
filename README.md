@@ -7,15 +7,15 @@
 3. token 认证
 4. 接入监控 Cat
 5. 接入日志 bizlog
+6. gzip 压缩
 ```
 
 #### 1.1 context header 传入字段
 ```
-u           设备标识
-os          系统标识
+u           设备唯一标识, uuid
+os          系统标识, 包含版本号
 d           硬件标识  
-av          应用版本
-t           token
+av          app 版本号
 c           下载渠道
 ```
 
@@ -44,3 +44,5 @@ ASE 加密，服务端控制
 #### 1.4 接入监控 Cat
 
 #### 1.5 接入日志 bizlog
+
+#### 1.6. gzip 压缩

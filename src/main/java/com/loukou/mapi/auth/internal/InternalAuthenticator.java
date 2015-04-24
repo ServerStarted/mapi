@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 
 import com.loukou.mapi.auth.processor.AuthAccountProcessor;
 import com.loukou.mapi.utils.HttpUtil;
-import com.loukou.mapi.utils.PosSignUtil;
+import com.loukou.mapi.utils.SignUtil;
 
 @Service
 public class InternalAuthenticator {
 
 	private static final Logger logger = Logger.getLogger(InternalAuthenticator.class);
-	private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern(PosSignUtil.DATE_TIME_FORMAT);    
+	private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern(SignUtil.DATE_TIME_FORMAT);    
 
 	@Autowired
 	private AuthAccountProcessor processor;
@@ -35,8 +35,8 @@ public class InternalAuthenticator {
 		}
 		logger.info("params got in auth:"+sb.toString());
 		//找到对应的appId和secret
-		String appIdStr = params.get(PosSignUtil.KEY_APP_ID);
-		String timeStr = params.get(PosSignUtil.KEY_TIME);
+		String appIdStr = params.get(SignUtil.KEY_APP_ID);
+		String timeStr = params.get(SignUtil.KEY_TIME);
 		//验证必要字段
 		if(StringUtils.isBlank(appIdStr) || StringUtils.isBlank(timeStr)) {
 			//验证失败：参数不带appId或timeId
@@ -79,14 +79,14 @@ public class InternalAuthenticator {
 			return false;
 		}
 		//签名
-		String signCaled = PosSignUtil.getSign(params, secret);
+		String signCaled = SignUtil.getSign(params, secret);
 		if (StringUtils.isBlank(signCaled)) {
 			//验证失败：签名失败
 			context.setAuthResult(InternalAuthResultEnum.RESULT_SIGN_FAILED);
 			logger.info(String.format("failed to sign with params"));
 			return false;
 		}
-		String signGot = params.get(PosSignUtil.KEY_SIGN);
+		String signGot = params.get(SignUtil.KEY_SIGN);
 		if (StringUtils.isNotBlank(signGot) && signGot.equalsIgnoreCase(signCaled)) {
 			//验证成功
 			context.setAppId(appId);
