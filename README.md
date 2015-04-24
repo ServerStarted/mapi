@@ -18,6 +18,7 @@ d           硬件标识
 app         app唯一标识 (iOS 取bundle id, android 取package name)
 av          app 版本号
 c           下载渠道
+t           token
 ```
 
 #### 1.2 验签认证
