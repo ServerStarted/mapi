@@ -54,3 +54,30 @@ ASE 加密，服务端控制
 gzip 之后每个字节加100
 * 方式2
 gzip 之后在字节数组前加字节头
+
+###  二、用法
+
+### 引入依赖包
+```xml
+pom.xml中加入
+<dependency>
+	<groupId>com.loukou</groupId>
+	<artifactId>mapi</artifactId>
+	<version>{MAPI-VERISON}</version>
+</dependency>
+```
+
+### 加入gzip压缩
+```xml
+web.xml 中加入
+	<!-- GZip filter -->
+	<filter>
+		<filter-name>gzipFilter</filter-name>
+		<filter-class>com.loukou.mapi.filter.GZIPFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>gzipFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+```
