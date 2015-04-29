@@ -10,12 +10,14 @@ public class ContextProcessor {
 
 	public static Context getContext(HttpServletRequest request) {
 		Context context = new Context();
-		
-		String requestId = UUID.randomUUID().toString();
 		String uri = request.getRequestURI();
+		String requestId = getHeader(request, Context.REQUEST_ID);
+		if (StringUtils.isEmpty(requestId)) {
+			requestId = UUID.randomUUID().toString();
+		}
 		
-		context.setRequestId(requestId);
 		context.setUri(uri);
+		context.setRequestId(requestId);
 		context.setUuid(getHeader(request, Context.UUID));
 		context.setOs(getHeader(request, Context.OS));
 		context.setDevice(getHeader(request, Context.DEVICE));

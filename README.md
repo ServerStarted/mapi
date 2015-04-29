@@ -12,6 +12,7 @@
 
 #### 1.1 context header 传入字段
 ```
+rid         request id, 每次请求的guid
 u           设备唯一标识, uuid
 os          系统标识, 包含版本号
 d           硬件标识  
@@ -57,13 +58,13 @@ gzip 之后在字节数组前加字节头
 
 ###  二、用法
 
-### 引入依赖包
+#### 2.1 引入依赖包
 ```xml
 pom.xml中加入
 <dependency>
 	<groupId>com.loukou</groupId>
 	<artifactId>mapi</artifactId>
-	<version>{MAPI-VERISON}</version>
+	<version>${MAPI-VERISON}</version>
 </dependency>
 
 spring 的配置文件中加入
@@ -71,9 +72,9 @@ spring 的配置文件中加入
     <import resource="classpath*:appcontext-mapi.xml" />
 ```
 
-### 加入servlet
+#### 2.2 加入监控打点等
 ```xml
-web.xml 中加入
+web.xml 中加入，替换掉 org.springframework.web.servlet.DispatcherServlet
 	<!-- Processes application requests -->
 	<servlet>
 		<servlet-name>appServlet</servlet-name>
@@ -85,14 +86,13 @@ web.xml 中加入
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
-	<!-- 所有动态请求都是/api前缀 -->
 	<servlet-mapping>
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 ```
 
-### 加入验签
+#### 2.3 加入验签
 ```xml
 spring 的配置文件中加入
 	<!-- 验签 -->
@@ -110,7 +110,7 @@ spring 的配置文件中加入
 	</mvc:interceptors> 
 ```
 
-### 加入token 验证
+#### 2.4 加入token 验证
 ```xml
 spring 的配置文件中加入
 	<!-- token 验证 -->
@@ -127,7 +127,7 @@ spring 的配置文件中加入
 		</mvc:interceptor>
 	</mvc:interceptors> 
 ```
-### 加入gzip压缩
+#### 2.5 加入gzip压缩
 ```xml
 web.xml 中加入
 	<!-- GZip filter -->
