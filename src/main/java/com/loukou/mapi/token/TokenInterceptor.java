@@ -1,8 +1,6 @@
 package com.loukou.mapi.token;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,15 +8,13 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.loukou.mapi.utils.AESUtils;
-import com.loukou.pos.proxy.service.cvs.constants.CvsInfoStatus;
-import com.loukou.pos.proxy.service.cvs.entity.CvsInfo;
-import com.loukou.pos.proxy.service.cvs.entity.CvsStaff;
 import com.loukou.pos.proxy.service.cvs.service.impl.CvsInfoService;
 import com.loukou.pos.proxy.service.cvs.service.impl.CvsStaffService;
 
@@ -27,10 +23,9 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 	
 	private static final String HEADER_TOKEN_NAME = "t";
 	private static final String KEY = "70QuJbTMlI8KB4rJ7bmLQA==";
-	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	private static final String TOKEN_SEPARATOR = ",";
 	private static final int TOKEN_TIMEOUT = 30 * 24 * 60 * 60 * 1000; 	// token 超时时间, 30天
-	public static final String USER_ID = "USER_ID";
+	public static final String TOKEN_DATA = "TOKEN_DATA";
 	
 	private Set<String> whiteList = new HashSet<String>();
 	
@@ -65,31 +60,14 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 			// 解析token 内容
 			if (tokenStr != null) {
 				try {
-					String[] strs = tokenStr.split(TOKEN_SEPARATOR);
-					// 获取userId
-					int userId = Integer.parseInt(strs[0]);
-					request.setAttribute(USER_ID, userId);
-					
-					// 验证店铺是否 审核未通过
-					CvsStaff cvsStaff = cvsStaffService.findStaffById(userId);
-					if (cvsStaff != null) {
-						CvsInfo cvsInfo = cvsInfoService.getCvsInfo(cvsStaff.getCvsId());
-						if (cvsInfo != null && (cvsInfo.getStatus() == CvsInfoStatus.AUDIT_FAILURE || cvsInfo.getStatus() == CvsInfoStatus.CLOSED)) {
-							// 店铺审核未通过
-							logger.info("the store audit NOT PASS.");
-							try {
-								response.sendError(HttpServletResponse.SC_FORBIDDEN);
-							} catch (IOException e) {
-								logger.error("fail to response.sendError(403)", e);
-							}
-							return false;
-						}
-					} 
+					String[] strs = separateToken(tokenStr);
+					// 获取tokenData
+					String tokenData = strs[0];
+					request.setAttribute(TOKEN_DATA, tokenData);
 										
 					// 获取/校验 时间
 					String dateStr = strs[1];
-					DateFormat dateFormator = new SimpleDateFormat(DATE_FORMAT);
-					Date d = dateFormator.parse(dateStr);
+					Date d = new Date(Long.parseLong(dateStr));
 					if (d != null) {
 						Date now = new Date();
 						// 超时检验
@@ -119,12 +97,22 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 		
 	}
 	
-	public static String getToken(int userId) {
-		DateFormat dateFormator = new SimpleDateFormat(DATE_FORMAT);
-		String dateStr = dateFormator.format(new Date());
-		String token = AESUtils.encrypt(userId+TOKEN_SEPARATOR+dateStr, KEY);
+	public static String getToken(String tokenData) {
+		if (tokenData == null) {
+			tokenData = StringUtils.EMPTY;
+		}
+		long dateLong = new Date().getTime();
+		String token = AESUtils.encrypt(tokenData+TOKEN_SEPARATOR+dateLong, KEY);
 		
 		return token;
+	}
+	
+	private String[] separateToken(String data) {
+		int index = data.lastIndexOf(TOKEN_SEPARATOR);
+		String tokenData = data.substring(0, index);
+		String dateStr = data.substring(index+1, data.length());
+		
+		return new String[] {tokenData, dateStr};
 	}
 
 	public Set<String> getWhiteList() {
@@ -136,7 +124,7 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 	}
 	
 	public static void main(String [] args) {
-		String token = getToken(10106);
+		String token = getToken("10106");
 		System.out.println(token);
 	}
 }

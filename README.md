@@ -65,8 +65,68 @@ pom.xml中加入
 	<artifactId>mapi</artifactId>
 	<version>{MAPI-VERISON}</version>
 </dependency>
+
+spring 的配置文件中加入
+    <!-- Import Mapi -->
+    <import resource="classpath*:appcontext-mapi.xml" />
 ```
 
+### 加入servlet
+```xml
+web.xml 中加入
+	<!-- Processes application requests -->
+	<servlet>
+		<servlet-name>appServlet</servlet-name>
+		<servlet-class>com.loukou.mapi.servlet.MapiDispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath*:spring-servlet.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- 所有动态请求都是/api前缀 -->
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+```
+
+### 加入验签
+```xml
+spring 的配置文件中加入
+	<!-- 验签 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/api/v1/store/**" /> <!-- 路径 -->
+			<bean class="com.loukou.mapi.sign.SignInterceptor">
+				<property name="whiteList">
+					<set>
+						<value>/store-web/api/v1/store/picture</value> <!-- 不需要验签的接口 -->
+					</set>
+				</property>
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors> 
+```
+
+### 加入token 验证
+```xml
+spring 的配置文件中加入
+	<!-- token 验证 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/api/v1/store/**" />  <!-- 路径 -->
+			<bean class="com.loukou.mapi.token.TokenInterceptor">
+				<property name="whiteList">
+					<set>
+						<value>/store-web/api/v1/store/merchant/login</value><!-- 不需要token验证的接口 -->
+					</set>
+				</property>
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors> 
+```
 ### 加入gzip压缩
 ```xml
 web.xml 中加入

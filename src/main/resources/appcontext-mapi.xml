@@ -11,4 +11,11 @@
 
 	<context:component-scan base-package="com.loukou.mapi" />
 	<context:annotation-config />
+	
+	<!-- Import service -->
+    <import resource="classpath*:appcontext-service.xml" />
+    <!-- Import datasource cvs -->
+    <import resource="classpath*:datasource-cvs.xml" />
+     <!-- Import datasource cvs -->
+    <import resource="classpath*:datasource-mall.xml" />
 </beans>
