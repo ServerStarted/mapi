@@ -20,7 +20,14 @@
 			<artifactId>pos-proxy-service</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
-		        
+
+		<!-- Cat  监控 -->
+		<dependency>
+			<groupId>com.dianping.cat</groupId>
+			<artifactId>cat-client</artifactId>
+			<version>1.1.8</version>
+		</dependency>
+
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -31,14 +38,14 @@
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- Servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -50,13 +57,13 @@
 			<artifactId>log4j</artifactId>
 		</dependency>
 
-        <!-- dw -->
+		<!-- dw -->
 		<dependency>
 			<groupId>com.loukou.dw</groupId>
 			<artifactId>bizlog-printer</artifactId>
 			<version>0.1.0</version>
 		</dependency>
-		
+
 	</dependencies>
 
 </project>
