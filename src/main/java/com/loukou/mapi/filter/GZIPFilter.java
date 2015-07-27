@@ -11,7 +11,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpHeaders;
+import com.google.common.net.HttpHeaders;
+
 
 
 public class GZIPFilter implements Filter {

@@ -24,15 +24,13 @@ public class BizLogProcessor {
 		
 		BizLog log = new BizLog();
 		
-		log.putString(Context.REQUEST_ID, context.getRequestId());
 		log.putString(Context.URI, context.getUri());
-		log.putString(Context.UUID, context.getUuid());
 		log.putString(Context.OS, context.getOs());
 		log.putString(Context.DEVICE, context.getDevice());
-		log.putString(Context.APP, context.getApp());
-		log.putString(Context.APP_VERSION, context.getAppVersion());
-		log.putString(Context.CHANNEL, context.getChannel());
-		
+		log.putString(Context.IP, context.getIp());
+		log.putString(Context.LAT, context.getLat());
+		log.putString(Context.LNG, context.getLng());
+		log.putString(Context.NETWORK, context.getNetwork());
 		bizPrinter.print(log);
 	}
 }

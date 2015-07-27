@@ -2,27 +2,14 @@ package com.loukou.mapi.context;
 
 public class Context {
 
-	public static final String REQUEST_ID = "rid";
-	public static final String URI = "uri";
-	public static final String UUID = "u";
-	public static final String OS = "os";
 	public static final String DEVICE = "d";
-	public static final String APP = "app";
-	public static final String APP_VERSION = "av";
+	public static final String OS = "os";
+	public static final String IP = "ip";
 	public static final String CHANNEL = "c";
-	
-	/**
-	 * 请求ID
-	 */
-	private String requestId = "";
-	/**
-	 * uri
-	 */
-	private String uri = "";
-	/**
-	 * 设备唯一标识, uuid
-	 */
-	private String uuid = "";
+	public static final String LAT = "lt";
+	public static final String LNG = "ln";
+	public static final String NETWORK = "n";
+	public static final String URI = "uri";
 	/**
 	 * 系统标识, 包含版本号
 	 */
@@ -31,38 +18,32 @@ public class Context {
 	 * 硬件标识
 	 */
 	private String device = "";
-	/**
-	 * app 版本号 (iOS 取bundle id, android 取package name)
-	 */
-	private String app = "";
-	/**
-	 * app 版本号
-	 */
-	private String appVersion = "";
+	
 	/**
 	 * 下载渠道
 	 */
 	private String channel = "";
 	
+	/**
+	 * IP地址
+	 */
+	private String ip = "";
+	/**
+	 * APP定位的纬度
+	 */
+	private String lat = "";
+	/**
+	 * APP定位的经度
+	 */
+	private String lng = "";
+	/**
+	 * APP的网络
+	 */
+	private String network = "";
 	
-	public String getRequestId() {
-		return requestId;
-	}
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
-	public String getUri() {
-		return uri;
-	}
-	public void setUri(String uri) {
-		this.uri = uri;
-	}
-	public String getUuid() {
-		return uuid;
-	}
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+	private String uri = "";
+	
+	
 	public String getOs() {
 		return os;
 	}
@@ -75,22 +56,41 @@ public class Context {
 	public void setDevice(String device) {
 		this.device = device;
 	}
-	public String getApp() {
-		return app;
-	}
-	public void setApp(String app) {
-		this.app = app;
-	}
-	public String getAppVersion() {
-		return appVersion;
-	}
-	public void setAppVersion(String appVersion) {
-		this.appVersion = appVersion;
-	}
 	public String getChannel() {
 		return channel;
 	}
 	public void setChannel(String channel) {
 		this.channel = channel;
 	}
+	public String getIp() {
+		return ip;
+	}
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+	public String getLat() {
+		return lat;
+	}
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+	public String getLng() {
+		return lng;
+	}
+	public void setLng(String lng) {
+		this.lng = lng;
+	}
+	public String getNetwork() {
+		return network;
+	}
+	public void setNetwork(String network) {
+		this.network = network;
+	}
+	public String getUri() {
+		return uri;
+	}
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
+
 }

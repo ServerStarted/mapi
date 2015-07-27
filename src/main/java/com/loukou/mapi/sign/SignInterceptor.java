@@ -16,8 +16,10 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.loukou.mapi.utils.HttpUtils;
 import com.loukou.mapi.utils.SignUtils;
-import com.loukou.pos.proxy.service.cvs.entity.InternalAuthAccount;
-import com.loukou.pos.proxy.service.cvs.service.impl.InternalAuthAccountService;
+import com.serverstarted.user.api.MApiService;
+import com.serverstarted.user.constants.ResultRespDtoCode;
+import com.serverstarted.user.resp.dto.InternalAuthAccountRespDto;
+import com.serverstarted.user.resp.dto.ResultRespDto;
 
 public class SignInterceptor extends HandlerInterceptorAdapter {
 
@@ -27,7 +29,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 	private Set<String> whiteList = new HashSet<String>();
 	
 	@Autowired
-	private InternalAuthAccountService internalAuthAccountService;
+	private MApiService mApiService;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request,
@@ -74,9 +76,12 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			}
 			// TODO 校验时间
 			// Date date = new Date(time);
-
-			InternalAuthAccount account = internalAuthAccountService.findByAppId(appId);
-			String secret = account == null ? StringUtils.EMPTY : account.getSecret();
+			String secret = StringUtils.EMPTY;
+			ResultRespDto<InternalAuthAccountRespDto> account = mApiService.findByAppId(appId);
+			if(account !=null && account.getCode() == ResultRespDtoCode.SUCCESS)
+			{
+				secret = account.getResult() == null ?  StringUtils.EMPTY : account.getResult().getSecret();
+			}
 			if(StringUtils.isEmpty(secret)) {
 				// 验证失败：secret 不存在
 				logger.info("no secret for appid="+appId);
@@ -106,7 +111,6 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 		}
 	}
 	
-		
 	public void postHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {

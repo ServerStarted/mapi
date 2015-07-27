@@ -11,19 +11,15 @@ public class ContextProcessor {
 	public static Context getContext(HttpServletRequest request) {
 		Context context = new Context();
 		String uri = request.getRequestURI();
-		String requestId = getHeader(request, Context.REQUEST_ID);
-		if (StringUtils.isEmpty(requestId)) {
-			requestId = UUID.randomUUID().toString();
-		}
 		
 		context.setUri(uri);
-		context.setRequestId(requestId);
-		context.setUuid(getHeader(request, Context.UUID));
 		context.setOs(getHeader(request, Context.OS));
 		context.setDevice(getHeader(request, Context.DEVICE));
-		context.setApp(getHeader(request, Context.APP));
-		context.setAppVersion(getHeader(request, Context.APP_VERSION));
 		context.setChannel(getHeader(request, Context.CHANNEL));
+		context.setIp(getHeader(request, Context.IP));
+		context.setLat(getHeader(request, Context.LAT));
+		context.setLng(getHeader(request, Context.LNG));
+		context.setNetwork(getHeader(request, Context.NETWORK));
 		return context;
 	}
 	

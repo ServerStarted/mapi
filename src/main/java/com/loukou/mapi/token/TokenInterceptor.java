@@ -10,13 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.loukou.mapi.utils.AESUtils;
-import com.loukou.pos.proxy.service.cvs.service.impl.CvsInfoService;
-import com.loukou.pos.proxy.service.cvs.service.impl.CvsStaffService;
 
 public class TokenInterceptor extends HandlerInterceptorAdapter {
 	private static final Logger logger = Logger.getLogger(HandlerInterceptorAdapter.class);
@@ -28,11 +25,6 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 	public static final String TOKEN_DATA = "TOKEN_DATA";
 	
 	private Set<String> whiteList = new HashSet<String>();
-	
-	@Autowired
-	private CvsStaffService cvsStaffService;
-	@Autowired
-	private CvsInfoService cvsInfoService;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request,
