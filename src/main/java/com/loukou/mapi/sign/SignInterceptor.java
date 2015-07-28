@@ -72,7 +72,6 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 				} catch (IOException e1) {
 					logger.info("invalid appid, appid="+appIdStr);
 				}
-				
 				return false;
 			}
 			//验证时间
