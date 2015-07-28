@@ -54,7 +54,12 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			//验证必要字段
 			if(StringUtils.isBlank(appIdStr) || StringUtils.isBlank(timeStr)) {
 				//验证失败：参数不带appId或timeId
-				logger.info("appid/time is missing.");
+				try {
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
+				} catch (IOException e) {
+					logger.info("appid/time is missing.");
+				}
+				
 				return false;
 			}
 			int appId = 0;
@@ -62,7 +67,12 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 				appId = Integer.parseInt(appIdStr);
 			} catch (NumberFormatException e) {
 				//验证失败：不是合法的appid
-				logger.info("invalid appid, appid="+appIdStr);
+				try {
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
+				} catch (IOException e1) {
+					logger.info("invalid appid, appid="+appIdStr);
+				}
+				
 				return false;
 			}
 			//验证时间
@@ -71,7 +81,12 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 				time = Long.parseLong(timeStr);
 			} catch(Exception e) {
 				//验证失败：时间格式不对
-				logger.info("invalid time, time="+timeStr);
+				try {
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
+				} catch (IOException e1) {
+					logger.info("invalid time, time="+timeStr);
+				}
+				
 				return false;
 			}
 			// TODO 校验时间
@@ -84,14 +99,22 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			}
 			if(StringUtils.isEmpty(secret)) {
 				// 验证失败：secret 不存在
-				logger.info("no secret for appid="+appId);
+				try {
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
+				} catch (IOException e) {
+					logger.info("no secret for appid="+appId);
+				}
 				return false;
 			}
 			//签名
 			String signCaled = SignUtils.getSign(params, secret);
 			if (StringUtils.isBlank(signCaled)) {
 				//验证失败：签名失败
-				logger.info(String.format("failed to sign with params"));
+				try {
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
+				} catch (IOException e) {
+					logger.info(String.format("failed to sign with params"));
+				}
 				return false;
 			}
 			String signGot = params.get(SignUtils.KEY_SIGN);
@@ -102,7 +125,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 				//验证失败：签名不匹配
 				logger.info(String.format("unmatch sign got[%s] caled[%s]", signGot, signCaled));
 				try {
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "invalid sign.");
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
 				} catch (IOException e) {
 					logger.error("fail to response.sendError(401)", e);
 				}
