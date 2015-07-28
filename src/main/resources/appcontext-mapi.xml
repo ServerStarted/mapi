@@ -13,8 +13,6 @@
         http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
 	<context:component-scan base-package="com.loukou.mapi" />
-	<import resource="classpath*:dubbo-ext-appcontext.xml" />
-  	
     <!-- 声明引用的服务接口 -->
     <dubbo:reference id="mApiService" interface="com.serverstarted.user.api.MApiService" />
 </beans>
