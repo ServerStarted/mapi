@@ -34,7 +34,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) {
-
+		response.setCharacterEncoding("utf-8");
 		String uri = request.getRequestURI();
 		if (whiteList.contains(uri)) {
 			return true;
@@ -54,7 +54,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			if(StringUtils.isBlank(appIdStr) || StringUtils.isBlank(timeStr)) {
 				//验证失败：参数不带appId或timeId
 				try {
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
 				} catch (IOException e) {
 					logger.info("appid/time is missing.");
 				}
@@ -67,7 +67,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			} catch (NumberFormatException e) {
 				//验证失败：不是合法的appid
 				try {
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
 				} catch (IOException e1) {
 					logger.info("invalid appid, appid="+appIdStr);
 				}
@@ -80,7 +80,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			} catch(Exception e) {
 				//验证失败：时间格式不对
 				try {
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
 				} catch (IOException e1) {
 					logger.info("invalid time, time="+timeStr);
 				}
@@ -98,7 +98,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			if(StringUtils.isEmpty(secret)) {
 				// 验证失败：secret 不存在
 				try {
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
 				} catch (IOException e) {
 					logger.info("no secret for appid="+appId);
 				}
@@ -109,7 +109,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			if (StringUtils.isBlank(signCaled)) {
 				//验证失败：签名失败
 				try {
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
 				} catch (IOException e) {
 					logger.info(String.format("failed to sign with params"));
 				}
@@ -123,7 +123,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 				//验证失败：签名不匹配
 				logger.info(String.format("unmatch sign got[%s] caled[%s]", signGot, signCaled));
 				try {
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "签名失败");
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
 				} catch (IOException e) {
 					logger.error("fail to response.sendError(401)", e);
 				}

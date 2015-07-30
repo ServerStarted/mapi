@@ -29,7 +29,7 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) {
-		
+		response.setCharacterEncoding("utf-8");
 		// 白名单
 		String uri = request.getRequestURI();
 		if (whiteList.contains(uri)) {
