@@ -36,7 +36,6 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			HttpServletResponse response, Object handler) {
 
 		String uri = request.getRequestURI();
-		
 		if (whiteList.contains(uri)) {
 			return true;
 		}
