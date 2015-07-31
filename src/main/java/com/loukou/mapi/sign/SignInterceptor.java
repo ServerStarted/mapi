@@ -16,8 +16,10 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.loukou.mapi.utils.HttpUtils;
 import com.loukou.mapi.utils.SignUtils;
-import com.loukou.pos.proxy.service.cvs.entity.InternalAuthAccount;
-import com.loukou.pos.proxy.service.cvs.service.impl.InternalAuthAccountService;
+import com.serverstarted.user.api.MApiService;
+import com.serverstarted.user.constants.ResultRespDtoCode;
+import com.serverstarted.user.resp.dto.InternalAuthAccountRespDto;
+import com.serverstarted.user.resp.dto.ResultRespDto;
 
 public class SignInterceptor extends HandlerInterceptorAdapter {
 
@@ -27,14 +29,13 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 	private Set<String> whiteList = new HashSet<String>();
 	
 	@Autowired
-	private InternalAuthAccountService internalAuthAccountService;
+	private MApiService mApiService;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) {
-
+		response.setCharacterEncoding("utf-8");
 		String uri = request.getRequestURI();
-		
 		if (whiteList.contains(uri)) {
 			return true;
 		}
@@ -52,7 +53,12 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			//验证必要字段
 			if(StringUtils.isBlank(appIdStr) || StringUtils.isBlank(timeStr)) {
 				//验证失败：参数不带appId或timeId
-				logger.info("appid/time is missing.");
+				try {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
+				} catch (IOException e) {
+					logger.info("appid/time is missing.");
+				}
+				
 				return false;
 			}
 			int appId = 0;
@@ -60,7 +66,11 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 				appId = Integer.parseInt(appIdStr);
 			} catch (NumberFormatException e) {
 				//验证失败：不是合法的appid
-				logger.info("invalid appid, appid="+appIdStr);
+				try {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
+				} catch (IOException e1) {
+					logger.info("invalid appid, appid="+appIdStr);
+				}
 				return false;
 			}
 			//验证时间
@@ -69,24 +79,40 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 				time = Long.parseLong(timeStr);
 			} catch(Exception e) {
 				//验证失败：时间格式不对
-				logger.info("invalid time, time="+timeStr);
+				try {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
+				} catch (IOException e1) {
+					logger.info("invalid time, time="+timeStr);
+				}
+				
 				return false;
 			}
 			// TODO 校验时间
 			// Date date = new Date(time);
-
-			InternalAuthAccount account = internalAuthAccountService.findByAppId(appId);
-			String secret = account == null ? StringUtils.EMPTY : account.getSecret();
+			String secret = StringUtils.EMPTY;
+			ResultRespDto<InternalAuthAccountRespDto> account = mApiService.findByAppId(appId);
+			if(account !=null && account.getCode() == ResultRespDtoCode.SUCCESS)
+			{
+				secret = account.getResult() == null ?  StringUtils.EMPTY : account.getResult().getSecret();
+			}
 			if(StringUtils.isEmpty(secret)) {
 				// 验证失败：secret 不存在
-				logger.info("no secret for appid="+appId);
+				try {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
+				} catch (IOException e) {
+					logger.info("no secret for appid="+appId);
+				}
 				return false;
 			}
 			//签名
 			String signCaled = SignUtils.getSign(params, secret);
 			if (StringUtils.isBlank(signCaled)) {
 				//验证失败：签名失败
-				logger.info(String.format("failed to sign with params"));
+				try {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
+				} catch (IOException e) {
+					logger.info(String.format("failed to sign with params"));
+				}
 				return false;
 			}
 			String signGot = params.get(SignUtils.KEY_SIGN);
@@ -97,7 +123,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 				//验证失败：签名不匹配
 				logger.info(String.format("unmatch sign got[%s] caled[%s]", signGot, signCaled));
 				try {
-					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "invalid sign.");
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
 				} catch (IOException e) {
 					logger.error("fail to response.sendError(401)", e);
 				}
@@ -106,7 +132,6 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 		}
 	}
 	
-		
 	public void postHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {

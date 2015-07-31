@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.loukou</groupId>
 		<artifactId>loukou-root</artifactId>
-		<version>0.1.5</version>
+		<version>0.1.11</version>
 	</parent>
 
 	<artifactId>mapi</artifactId>
@@ -12,15 +12,33 @@
 	<packaging>jar</packaging>
 	<name>mapi</name>
 	<description>api framework for mobile</description>
-
+ 	<properties>
+		<dubbo-ext.version>0.1.0</dubbo-ext.version>
+		<cat-ext.version>0.1.0</cat-ext.version>
+	</properties>
 	<dependencies>
-
+		<!-- user service api -->
 		<dependency>
-			<groupId>com.loukou</groupId>
-			<artifactId>pos-proxy-service</artifactId>
+			<groupId>com.serverstarted</groupId>
+			<artifactId>user-api</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
+		<!-- poi -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>3.11</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.11</version>
+		</dependency>
 		<!-- Cat  监控 -->
 		<dependency>
 			<groupId>com.dianping.cat</groupId>
@@ -56,14 +74,67 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>
-
+		<!-- dubbo -->
+		<dependency>
+			<groupId>com.serverstarted</groupId>
+			<artifactId>dubbo-ext</artifactId>
+			<version>${dubbo-ext.version}</version>
+		</dependency>
 		<!-- dw -->
 		<dependency>
 			<groupId>com.loukou.dw</groupId>
 			<artifactId>bizlog-printer</artifactId>
 			<version>0.1.0</version>
 		</dependency>
-
+		<!-- httpclient -->
+	    <dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version> 
+		</dependency>
 	</dependencies>
-
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<webResources>
+						<resource>
+							<directory>src/main/webapps</directory>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>install</id>
+						<phase>install</phase>
+						<goals>
+							<goal>sources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		      <plugin>
+		        <groupId>org.eclipse.jetty</groupId>
+		        <artifactId>jetty-maven-plugin</artifactId>
+		        <version>9.2.7.v20150116</version>
+		        <configuration>
+		          <contextPath>/user-app-web</contextPath>
+		        </configuration>
+		      </plugin>
+		</plugins>
+	</build>
 </project>
