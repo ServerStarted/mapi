@@ -1,6 +1,5 @@
 package com.loukou.mapi.sign;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +26,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 	public static final String ATTR_KEY_AUTH_CTX = "INTERNAL_AUTH_CONTEXT";
 	// 白名单，不需要验签
 	private Set<String> whiteList = new HashSet<String>();
+	private static final String INVALID_REQUEST_MSG = "非法请求.(400)";
 	
 	@Autowired
 	private MApiService mApiService;
@@ -34,7 +34,6 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) {
-		response.setCharacterEncoding("utf-8");
 		String uri = request.getRequestURI();
 		if (whiteList.contains(uri)) {
 			return true;
@@ -53,12 +52,9 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			//验证必要字段
 			if(StringUtils.isBlank(appIdStr) || StringUtils.isBlank(timeStr)) {
 				//验证失败：参数不带appId或timeId
-				try {
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
-				} catch (IOException e) {
-					logger.info("appid/time is missing.");
-				}
-				
+				logger.warn("appid/time is missing.");
+				HttpUtils.sendErrors(response, HttpServletResponse.SC_BAD_REQUEST, INVALID_REQUEST_MSG);
+
 				return false;
 			}
 			int appId = 0;
@@ -66,11 +62,9 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 				appId = Integer.parseInt(appIdStr);
 			} catch (NumberFormatException e) {
 				//验证失败：不是合法的appid
-				try {
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
-				} catch (IOException e1) {
-					logger.info("invalid appid, appid="+appIdStr);
-				}
+				logger.info("invalid appid, appid="+appIdStr);
+				HttpUtils.sendErrors(response, HttpServletResponse.SC_BAD_REQUEST, INVALID_REQUEST_MSG);
+
 				return false;
 			}
 			//验证时间
@@ -79,11 +73,8 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 				time = Long.parseLong(timeStr);
 			} catch(Exception e) {
 				//验证失败：时间格式不对
-				try {
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
-				} catch (IOException e1) {
-					logger.info("invalid time, time="+timeStr);
-				}
+				logger.warn("invalid time, time="+timeStr);
+				HttpUtils.sendErrors(response, HttpServletResponse.SC_BAD_REQUEST, INVALID_REQUEST_MSG);
 				
 				return false;
 			}
@@ -97,22 +88,18 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			}
 			if(StringUtils.isEmpty(secret)) {
 				// 验证失败：secret 不存在
-				try {
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
-				} catch (IOException e) {
-					logger.info("no secret for appid="+appId);
-				}
+				logger.warn("invalid time, time="+timeStr);
+				HttpUtils.sendErrors(response, HttpServletResponse.SC_BAD_REQUEST, INVALID_REQUEST_MSG);
+
 				return false;
 			}
 			//签名
 			String signCaled = SignUtils.getSign(params, secret);
 			if (StringUtils.isBlank(signCaled)) {
 				//验证失败：签名失败
-				try {
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
-				} catch (IOException e) {
-					logger.info(String.format("failed to sign with params"));
-				}
+				HttpUtils.sendErrors(response, HttpServletResponse.SC_BAD_REQUEST, INVALID_REQUEST_MSG);
+				logger.warn(String.format("failed to sign with params"));
+
 				return false;
 			}
 			String signGot = params.get(SignUtils.KEY_SIGN);
@@ -122,11 +109,8 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 			} else {
 				//验证失败：签名不匹配
 				logger.info(String.format("unmatch sign got[%s] caled[%s]", signGot, signCaled));
-				try {
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "签名失败");
-				} catch (IOException e) {
-					logger.error("fail to response.sendError(401)", e);
-				}
+				HttpUtils.sendErrors(response, HttpServletResponse.SC_BAD_REQUEST, INVALID_REQUEST_MSG);
+
 				return false;
 			}
 		}

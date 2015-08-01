@@ -1,6 +1,5 @@
 package com.loukou.mapi.token;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.loukou.mapi.utils.AESUtils;
+import com.loukou.mapi.utils.HttpUtils;
 
 public class TokenInterceptor extends HandlerInterceptorAdapter {
 	private static final Logger logger = Logger.getLogger(HandlerInterceptorAdapter.class);
@@ -21,15 +21,16 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 	private static final String HEADER_TOKEN_NAME = "t";
 	private static final String KEY = "70QuJbTMlI8KB4rJ7bmLQA==";
 	private static final String TOKEN_SEPARATOR = ",";
-	private static final int TOKEN_TIMEOUT = 30 * 24 * 60 * 60 * 1000; 	// token 超时时间, 30天
+	private static final long TOKEN_TIMEOUT = (long)30 * 24 * 60 * 60 * 1000; 	// token 超时时间, 30天
 	public static final String TOKEN_DATA = "TOKEN_DATA";
+	
+	private static final String UNAUTHORIZED_REQUEST_MSG = "未授权的请求.(401)";
 	
 	private Set<String> whiteList = new HashSet<String>();
 
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) {
-		response.setCharacterEncoding("utf-8");
 		// 白名单
 		String uri = request.getRequestURI();
 		if (whiteList.contains(uri)) {
@@ -73,12 +74,9 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 			}
 		}
 		
-		logger.info("invalid token.");
-		try {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "invalid token.");
-		} catch (IOException e) {
-			logger.error("fail to response.sendError(401)", e);
-		}
+		logger.warn("invalid token.");
+		HttpUtils.sendErrors(response, HttpServletResponse.SC_UNAUTHORIZED, UNAUTHORIZED_REQUEST_MSG);
+
 		return false;
 	}
 	
