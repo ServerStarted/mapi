@@ -13,8 +13,8 @@
 	<name>mapi</name>
 	<description>api framework for mobile</description>
  	<properties>
-		<dubbo-ext.version>0.1.0</dubbo-ext.version>
-		<cat-ext.version>0.1.0</cat-ext.version>
+		<dubbo-ext.version>0.2.0</dubbo-ext.version>
+		<cat-ext.version>0.2.0</cat-ext.version>
 	</properties>
 	<dependencies>
 		<!-- user service api -->
