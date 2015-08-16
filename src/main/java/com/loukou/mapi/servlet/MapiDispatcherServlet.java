@@ -19,7 +19,7 @@ public class MapiDispatcherServlet extends DispatcherServlet {
 	private static final long serialVersionUID = -6919789016646365774L;
 	public static final String MAPI_CONTEXT = "mapi_context";
 	public static final String MAPI_TRANSACTION_NAME = "MAPI";
-	private static final String SERVER_ERROR_MSG = "服务异常，请稍后重试.(500)";
+	private static final String SERVER_ERROR_MSG = "服务异常，请稍后重试 (500)";
 	
 	@Override
 	protected void doDispatch(HttpServletRequest request,

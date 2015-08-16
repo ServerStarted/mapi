@@ -24,7 +24,7 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 	private static final long TOKEN_TIMEOUT = (long)30 * 24 * 60 * 60 * 1000; 	// token 超时时间, 30天
 	public static final String TOKEN_DATA = "TOKEN_DATA";
 	
-	private static final String UNAUTHORIZED_REQUEST_MSG = "未授权的请求.(401)";
+	private static final String UNAUTHORIZED_REQUEST_MSG = "未授权的请求 (401)";
 	
 	private Set<String> whiteList = new HashSet<String>();
 

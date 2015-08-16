@@ -26,7 +26,7 @@ public class SignInterceptor extends HandlerInterceptorAdapter {
 	public static final String ATTR_KEY_AUTH_CTX = "INTERNAL_AUTH_CONTEXT";
 	// 白名单，不需要验签
 	private Set<String> whiteList = new HashSet<String>();
-	private static final String INVALID_REQUEST_MSG = "非法请求.(400)";
+	private static final String INVALID_REQUEST_MSG = "非法请求 (400)";
 	
 	@Autowired
 	private MApiService mApiService;
